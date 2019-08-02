@@ -63,6 +63,8 @@ ex) items.json
 	}
 ]}
 ```
+### Get selector easily
+![get_selector](https://github.com/matsuoky/browssert/blob/images/get_selector.png)
 
 # Output image
 ```
