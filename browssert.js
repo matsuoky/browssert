@@ -31,13 +31,16 @@ async function next(page, iNext) {
 		for (let i = 0; i < iNext.input.length; i++){
 			let t = iNext.input[i];
 			if (t.type === "text") {
+				await page.click(t.selector, { clickCount: 3 });
 				await page.type(t.selector, t.val);
 			}
 		}
 	}
 	if (iNext.type === "click") {
 		await Promise.all([
-			page.waitForNavigation({timeout: 60000, waitUntil: "domcontentloaded"}),
+		//	page.waitForNavigation({timeout: 60000, waitUntil: "domcontentloaded"}),
+		//	page.waitForNavigation({timeout: 60000, waitUntil: "networkidle0"}),
+			page.waitForSelector(iNext.selector),
 			page.click(iNext.selector)
 		]);
 	}
@@ -61,7 +64,12 @@ async function evalTarget(page, target) {
 			result = result + "NG";
 			shot = shot + t.expected + "_ng_";
 		}
-		result = result + ":result=" + data + ":expected=" + t.expected;
+		let name = ""
+		if (t.name != undefined) {
+			name = t.name + "_"
+		}
+		result = name + result + ":result=" + data + ":expected=" + t.expected;
+		shot = name + shot;
 		console.log(result);
 	}
 	shot = shot.replace(/\r?\n/g, '');
@@ -87,7 +95,7 @@ async function evalTarget(page, target) {
 					width: 1200,
 					height: 800
 				});
-				await page.goto(item.url);
+				await page.goto(item.url, {waitUntil: 'networkidle0'});
 				if (item.page) {
 					await searchPage(page, item.page)
 				}
